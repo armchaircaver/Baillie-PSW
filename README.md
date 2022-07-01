@@ -1,7 +1,5 @@
 # Baillie-PSW
-Python implementation of the Baillie-PSW primality test
-
-Implementation of the Baillie-PSW primality checking algorithm, from the following papers:
+Python implementation of the Baillie-PSW primality test, based on the following papers:
 
 - Lucas Pseudoprimes
 Robert Baillie and Samuel S. Wagstaff, Jr.
