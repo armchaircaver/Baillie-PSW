@@ -13,11 +13,11 @@ https://arxiv.org/pdf/2006.14425v1.pdf,  https://homes.cerias.purdue.edu/~ssw/bf
 
 Files in the repository are:
 
-- baillie_psw.py contains the implemetation of the algorithm
+- **baillie_psw.py** contains the implemetation of the algorithm
 
-- baillie PSW test suite.py  has a suite of tests of the algorithm, using sieve and segmented sieve to generate test numbers
+- **baillie PSW test suite.py**  has a suite of tests of the algorithm, using sieve and segmented sieve to generate test numbers
 
-- Compare pseudoprimes.py is a test suite to compare the performance and correctness of the standard and strengthened Lucas algorithms, 
+- **Compare pseudoprimes.py** is a test suite to compare the performance and correctness of the standard and strengthened Lucas algorithms, 
 using known pseudoprimes obtained from Pseudoprime Statistics, Tables, and Data (Fermat, Miller-Rabin, Lucas, Fibonacci, Pell, Frobenius, Baillie-PSW), 
 Dana Jacobsen, 31 March 2020, http://ntheory.org/pseudoprimes.html 
 
