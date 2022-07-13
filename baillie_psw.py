@@ -1,12 +1,12 @@
 """
 Implementation of the Baillie-PSW primality checking algorithm, from the following papers:
 
-Lucas Pseudoprimes
+[1] Lucas Pseudoprimes
 Robert Baillie and Samuel S. Wagstaff, Jr.
 Mathematics of Computation Vol. 35, No. 152 (Oct., 1980), pp. 1391-1417
-https://www.jstor.org/stable/2006406
+https://www.jstor.org/stable/2006406, http://mpqs.free.fr/LucasPseudoprimes.pdf
 
-Strengthening the Baillie-PSW primality test,
+[2] Strengthening the Baillie-PSW primality test,
 Robert Baillie, Andrew Fiori and Samuel S. Wagstaff, Jr.
 Math. Comp. 90 (2021), 1931-1955
 https://arxiv.org/pdf/2006.14425v1.pdf,  https://homes.cerias.purdue.edu/~ssw/bfw.pdf
@@ -49,23 +49,35 @@ def jacobi(a, n):
   else:
       return 0
 #-------------------------------------------------------------------------------
-def miller_rabin_base_2(n):
-  # adapted from https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Python
-  s = 0
-  d = n-1
-  while d%2==0:
-      d>>=1
-      s+=1
+def miller_rabin(n):
+  """
+  This implemetation uses a single base, 2, but is written in a way
+  that allows additional bases to be added easily if required
 
-  def trial_composite(a):
-    if pow(a, d, n) == 1:
-      return False
-    for i in range(s):
-      if pow(a, 2**i * d, n) == n-1:
-        return False
-    return True  
+  The last line, commented out, is an example of how the the routine could be modified
+  if more bases are required
+  """
+  
+  # find s,d so that d is odd and (2^s)d = n-1
+  d = (n-1)>>1
+  s = 1
+  while d&1 == 0:
+    d >>= 1
+    s += 1
 
-  return not trial_composite(2)
+  def sprp(a):
+    # test whether 'n' is a strong probable prime to base 'a'
+    a = pow(a,d,n)
+    if a == 1 :
+      return True
+    for r in range(s-1):
+      if a==n-1:
+        return True
+      a = (a*a)%n
+    return a == n-1
+
+  return sprp(2)
+  #return all( sprp(a) for a in (2,3,5) )
 #-------------------------------------------------------------------------------
 
 def D_chooser(n):
@@ -139,7 +151,7 @@ def lucas_spp(n, D, P, Q):
     if V==0:
         return True  
     V = ( V*V - 2*Q)%n
-    Q=pow(Q,2,n)
+    Q = pow(Q,2,n)
   
   return False
 
@@ -147,22 +159,30 @@ def lucas_spp(n, D, P, Q):
 def baillie_psw(n):
 
   if n <= 1: return False
-  
+  if n&1==0:
+    return n==2
+
+  # need to test small primes as the D chooser might not find
+  # a suitable value for small primes
   for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
             53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101]:
     if n % p == 0:
       return n==p
 
-  if not miller_rabin_base_2(n):
-     return False
+  if not miller_rabin(n):
+    #print("miller rabin identifies composite")  
+    return False
 
   
   D,j = D_chooser(n)
-  
   if j==0:
-    return False # see https://www.jstor.org/stable/2006406
+    return False # see [1]
 
   # even numbers and squares have been eliminated by this point
   return lucas_pp(n, D, 1, (1-D)//4) # slightly faster than lucas_spp
 #-------------------------------------------------------------------------------
 
+if __name__ == "__main__":
+  print("primes up to 15")
+  for n in range(50):
+      print("n=",n, baillie_psw(n))
