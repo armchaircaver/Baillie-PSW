@@ -99,13 +99,15 @@ def D_chooser(n):
     j = jacobi(D, n)
   return (D,j)
 #-------------------------------------------------------------------------------
-
+"""
 def div2mod(x,n):
   # divide by 2 modulo n
   # assumes n is odd
   if x & 1:
     return ((x+n)>>1)%n
   return (x>>1)%n
+"""
+div2mod = lambda x,n: ((x+n)>>1)%n if x&1 else (x>>1)%n
 #-------------------------------------------------------------------------------
 
 def U_V_subscript(k, n, P, D):
@@ -183,6 +185,15 @@ def baillie_psw(n):
 #-------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-  print("primes up to 15")
-  for n in range(50):
-      print("n=",n, baillie_psw(n))
+    
+  from array import array
+  
+  MAX=1000000
+  plist = array('b', [0,0,1]) + array('b',[1,0])*(MAX//2+1)
+  for n in range(3,int(MAX**0.5)+1,  2):
+    if plist[n]: plist[n*n::2*n]= array('b',[0])*len(plist[n*n::2*n])
+  
+  print(f"testing numbers up to {MAX}...")
+  for n in range(MAX):
+      assert plist[n] == baillie_psw(n)
+  print(f"all numbers up to {MAX} OK")
